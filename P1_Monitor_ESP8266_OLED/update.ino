@@ -10,6 +10,8 @@ void checkForUpdates() {
 
     HTTPClient http;
     http.begin(client, versionUrl);
+    http.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    http.addHeader("Pragma", "no-cache");
     int httpCode = http.GET();
     Serial.printf("HTTP kód: %d\n", httpCode);
 
@@ -52,8 +54,8 @@ void checkForUpdates() {
     String firmwareUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + String(GITHUB_FW_NAME) + "?t=" + String(millis());
 
     u8g2.clearBuffer();
-    u8g2.drawUTF8(0, 10, (String("Uj verzio: ") + latestVersionStr).c_str());
-    u8g2.drawUTF8(0, 24, "Letoltes...");
+    u8g2.drawUTF8(0, 10, (String("Új verzió: ") + latestVersionStr).c_str());
+    u8g2.drawUTF8(0, 24, "Letöltés...");
     u8g2.sendBuffer();
 
     Serial.print("Letöltés: ");
