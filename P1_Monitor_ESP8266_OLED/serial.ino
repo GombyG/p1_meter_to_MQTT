@@ -33,11 +33,11 @@ void handleP1Port() {
 
             // 3. Telegram vége (!)
             if (c == '!') { 
+                addObisCard(kod, ertek);
                 // Ha az utolsó sorban (a ! karakter előtt/után) maradt feldolgozatlan adat
-                if (currentLine.length() > 0) {
-                    String tableRow = formatObisToRow(currentLine);
-                    if (tableRow.length() > 0) {
-                        tempObisData += tableRow;
+                if (tempObisData.length() > 0) {
+                    allObisData = tempObisData; // Átadja a friss HTML-t a webszervernek
+                    tempObisData = "";          // Kiüríti a következőknek
                     }
                 }
 

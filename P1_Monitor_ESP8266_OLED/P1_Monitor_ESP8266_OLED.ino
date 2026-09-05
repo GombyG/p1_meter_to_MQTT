@@ -144,12 +144,13 @@ String savedMqttServer = "";
 int savedMqttPort = MQTT_PORT;
 String savedMqttUser = "";
 String savedMqttPass = "";
-String allObisData = "";
 bool inMenuMode = false;
 int selectedMenuItem = 1; 
 unsigned long lastMenuActivity = 0;
 bool startupUpdateChecked = false; 
 extern DNSServer dnsServer;
+String tempObisData = ""; // Ide gyűjtjük az éppen beérkező kártyákat
+String allObisData = "";  // Ezt jeleníti meg a handleRoot() a weblapon
 
 String formatWatt(const String& kwString) {
     if (kwString.length() == 0 || kwString == "N/A") return "0 W";

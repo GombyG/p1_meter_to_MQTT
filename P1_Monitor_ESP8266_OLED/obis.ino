@@ -13,76 +13,84 @@ String formatP1Time(String rawTime) {
   return "20" + yy + "." + mm + "." + dd + " " + hh + ":" + min + ":" + ss;
 }
 
-// Hivatalos E.ON OBIS kódok azonosítása
 String getObisName(String code) {
-  // Általános és állapot kódok
-  if (code.endsWith("1.0.0") || code.endsWith("1.0.0.255")) return "Idő";
-  if (code.endsWith("42.0.0") || code.endsWith("42.0.0.255")) return "COSEM logikai eszköznév";
-  if (code.endsWith("96.1.0") || code.endsWith("96.1.0.255")) return "Mérő gyári szám";
-  if (code.endsWith("96.14.0") || code.endsWith("96.14.0.255")) return "Aktuális tarifa";
-  if (code.endsWith("96.50.68") || code.endsWith("96.50.68.255") || code.endsWith("96.3.10") || code.endsWith("96.3.10.255")) return "Megszakító státusz";
-  if (code.endsWith("17.0.0") || code.endsWith("17.0.0.255")) return "Limiter határérték";
-  if (code.endsWith("96.13.0") || code.endsWith("96.13.0.255")) return "Áramszolgáltatói üzenet";
+  code.trim();
 
-  // Hatásos import energiák (+A)
-  if (code.endsWith("1.8.0") || code.endsWith("1.8.0.255")) return "Hatásos import energia (+A) totál";
-  if (code.endsWith("1.8.1") || code.endsWith("1.8.1.255")) return "Hatásos import energia T1";
-  if (code.endsWith("1.8.2") || code.endsWith("1.8.2.255")) return "Hatásos import energia T2";
-  if (code.endsWith("1.8.3") || code.endsWith("1.8.3.255")) return "Hatásos import energia T3";
-  if (code.endsWith("1.8.4") || code.endsWith("1.8.4.255")) return "Hatásos import energia T4";
+  // Helper lambda / logika a pontos egyezéshez (sima vs .255)
+  #define IS_OBIS(c, target) (c == target || c == target ".255")
 
-  // Hatásos export energiák (-A)
-  if (code.endsWith("2.8.0") || code.endsWith("2.8.0.255")) return "Hatásos export energia (-A) totál";
-  if (code.endsWith("2.8.1") || code.endsWith("2.8.1.255")) return "Hatásos export energia T1";
-  if (code.endsWith("2.8.2") || code.endsWith("2.8.2.255")) return "Hatásos export energia T2";
-  if (code.endsWith("2.8.3") || code.endsWith("2.8.3.255")) return "Hatásos export energia T3";
-  if (code.endsWith("2.8.4") || code.endsWith("2.8.4.255")) return "Hatásos export energia T4";
+  // --- 1. FESZÜLTSÉGEK ÉS ÁRAMOK (Előre sorolva, hogy ne csússzanak bele a 2.7.0-ba!) ---
+  if (IS_OBIS(code, "32.7.0")) return "Pillanatnyi feszültség L1";
+  if (IS_OBIS(code, "52.7.0")) return "Pillanatnyi feszültség L2";
+  if (IS_OBIS(code, "72.7.0")) return "Pillanatnyi feszültség L3";
+  if (IS_OBIS(code, "31.7.0")) return "Pillanatnyi áram L1";
+  if (IS_OBIS(code, "51.7.0")) return "Pillanatnyi áram L2";
+  if (IS_OBIS(code, "71.7.0")) return "Pillanatnyi áram L3";
 
-  // Kombinált és meddő energiák
-  if (code.endsWith("15.8.0") || code.endsWith("15.8.0.255")) return "Abszolút hatásos energia (|+A|+|-A|)";
-  if (code.endsWith("3.8.0") || code.endsWith("3.8.0.255")) return "Import meddő energia (+R)";
-  if (code.endsWith("4.8.0") || code.endsWith("4.8.0.255")) return "Export meddő energia (-R)";
-  if (code.endsWith("5.8.0") || code.endsWith("5.8.0.255")) return "Meddő energia QI (Import ind.)";
-  if (code.endsWith("6.8.0") || code.endsWith("6.8.0.255")) return "Meddő energia QII (Import kap.)";
-  if (code.endsWith("7.8.0") || code.endsWith("7.8.0.255")) return "Meddő energia QIII (Export ind.)";
-  if (code.endsWith("8.8.0") || code.endsWith("8.8.0.255")) return "Meddő energia QIV (Export kap.)";
+  // --- 2. ÁLTALÁNOS ÉS ÁLLAPOT KÓDOK ---
+  if (IS_OBIS(code, "1.0.0"))   return "Idő";
+  if (IS_OBIS(code, "42.0.0"))  return "COSEM logikai eszköznév";
+  if (IS_OBIS(code, "96.1.0"))  return "Mérő gyári szám";
+  if (IS_OBIS(code, "96.14.0")) return "Aktuális tarifa";
+  if (IS_OBIS(code, "96.50.68") || IS_OBIS(code, "96.3.10")) return "Megszakító státusz";
+  if (IS_OBIS(code, "17.0.0"))  return "Limiter határérték";
+  if (IS_OBIS(code, "96.13.0")) return "Áramszolgáltatói üzenet";
 
-  // Pillanatnyi teljesítmények (Összesített & Fázisonkénti)
-  if (code.endsWith("1.7.0") || code.endsWith("1.7.0.255")) return "Pillanatnyi import teljesítmény (+A)";
-  if (code.endsWith("2.7.0") || code.endsWith("2.7.0.255")) return "Pillanatnyi export teljesítmény (-A)";
-  if (code.endsWith("21.7.0") || code.endsWith("21.7.0.255")) return "Import teljesítmény (+A) L1";
-  if (code.endsWith("41.7.0") || code.endsWith("41.7.0.255")) return "Import teljesítmény (+A) L2";
-  if (code.endsWith("61.7.0") || code.endsWith("61.7.0.255")) return "Import teljesítmény (+A) L3";
-  if (code.endsWith("22.7.0") || code.endsWith("22.7.0.255")) return "Export teljesítmény (-A) L1";
-  if (code.endsWith("42.7.0") || code.endsWith("42.7.0.255")) return "Export teljesítmény (-A) L2";
-  if (code.endsWith("62.7.0") || code.endsWith("62.7.0.255")) return "Export teljesítmény (-A) L3";
+  // --- 3. HATÁSOS IMPORT ENERGIÁK (+A) ---
+  if (IS_OBIS(code, "1.8.0")) return "Hatásos import energia (+A) totál";
+  if (IS_OBIS(code, "1.8.1")) return "Hatásos import energia T1";
+  if (IS_OBIS(code, "1.8.2")) return "Hatásos import energia T2";
+  if (IS_OBIS(code, "1.8.3")) return "Hatásos import energia T3";
+  if (IS_OBIS(code, "1.8.4")) return "Hatásos import energia T4";
 
-  // Pillanatnyi meddő teljesítmények
-  if (code.endsWith("5.7.0") || code.endsWith("5.7.0.255")) return "Pillanatnyi meddő QI";
-  if (code.endsWith("6.7.0") || code.endsWith("6.7.0.255")) return "Pillanatnyi meddő QII";
-  if (code.endsWith("7.7.0") || code.endsWith("7.7.0.255")) return "Pillanatnyi meddő QIII";
-  if (code.endsWith("8.7.0") || code.endsWith("8.7.0.255")) return "Pillanatnyi meddő QIV";
+  // --- 4. HATÁSOS EXPORT ENERGIÁK (-A) ---
+  if (IS_OBIS(code, "2.8.0")) return "Hatásos export energia (-A) totál";
+  if (IS_OBIS(code, "2.8.1")) return "Hatásos export energia T1";
+  if (IS_OBIS(code, "2.8.2")) return "Hatásos export energia T2";
+  if (IS_OBIS(code, "2.8.3")) return "Hatásos export energia T3";
+  if (IS_OBIS(code, "2.8.4")) return "Hatásos export energia T4";
 
-  // Feszültségek és Áramok
-  if (code.endsWith("32.7.0") || code.endsWith("32.7.0.255")) return "Pillanatnyi feszültség L1";
-  if (code.endsWith("52.7.0") || code.endsWith("52.7.0.255")) return "Pillanatnyi feszültség L2";
-  if (code.endsWith("72.7.0") || code.endsWith("72.7.0.255")) return "Pillanatnyi feszültség L3";
-  if (code.endsWith("31.7.0") || code.endsWith("31.7.0.255")) return "Pillanatnyi áram L1";
-  if (code.endsWith("51.7.0") || code.endsWith("51.7.0.255")) return "Pillanatnyi áram L2";
-  if (code.endsWith("71.7.0") || code.endsWith("71.7.0.255")) return "Pillanatnyi áram L3";
+  // --- 5. KOMBINÁLT ÉS MEDDŐ ENERGIÁK ---
+  if (IS_OBIS(code, "15.8.0")) return "Abszolút hatásos energia (|+A|+|-A|)";
+  if (IS_OBIS(code, "3.8.0"))  return "Import meddő energia (+R)";
+  if (IS_OBIS(code, "4.8.0"))  return "Export meddő energia (-R)";
+  if (IS_OBIS(code, "5.8.0"))  return "Meddő energia QI (Import ind.)";
+  if (IS_OBIS(code, "6.8.0"))  return "Meddő energia QII (Import kap.)";
+  if (IS_OBIS(code, "7.8.0"))  return "Meddő energia QIII (Export ind.)";
+  if (IS_OBIS(code, "8.8.0"))  return "Meddő energia QIV (Export kap.)";
 
-  // Áram korlátozás határértékek
-  if (code.endsWith("31.4.0") || code.endsWith("31.4.0.255")) return "Áram korlátozás küszöb L1";
-  if (code.endsWith("51.4.0") || code.endsWith("51.4.0.255")) return "Áram korlátozás küszöb L2";
-  if (code.endsWith("71.4.0") || code.endsWith("71.4.0.255")) return "Áram korlátozás küszöb L3";
+  // --- 6. PILLANATNYI TELJESÍTMÉNYEK ---
+  if (IS_OBIS(code, "1.7.0"))  return "Pillanatnyi import teljesítmény (+A)";
+  if (IS_OBIS(code, "2.7.0"))  return "Pillanatnyi export teljesítmény (-A)";
+  if (IS_OBIS(code, "21.7.0")) return "Import teljesítmény (+A) L1";
+  if (IS_OBIS(code, "41.7.0")) return "Import teljesítmény (+A) L2";
+  if (IS_OBIS(code, "61.7.0")) return "Import teljesítmény (+A) L3";
+  if (IS_OBIS(code, "22.7.0")) return "Export teljesítmény (-A) L1";
+  if (IS_OBIS(code, "42.7.0")) return "Export teljesítmény (-A) L2";
+  if (IS_OBIS(code, "62.7.0")) return "Export teljesítmény (-A) L3";
 
-  // Teljesítmény tényezők és Frekvencia
-  if (code.endsWith("13.7.0") || code.endsWith("13.7.0.255")) return "Teljesítmény tényező (CosPhi)";
-  if (code.endsWith("33.7.0") || code.endsWith("33.7.0.255")) return "Teljesítmény tényező L1";
-  if (code.endsWith("53.7.0") || code.endsWith("53.7.0.255")) return "Teljesítmény tényező L2";
-  if (code.endsWith("73.7.0") || code.endsWith("73.7.0.255")) return "Teljesítmény tényező L3";
-  if (code.endsWith("14.7.0") || code.endsWith("14.7.0.255")) return "Hálózati frekvencia";
+  // --- 7. PILLANATNYI MEDDŐ TELJESÍTMÉNYEK ---
+  if (IS_OBIS(code, "5.7.0")) return "Pillanatnyi meddő QI";
+  if (IS_OBIS(code, "6.7.0")) return "Pillanatnyi meddő QII";
+  if (IS_OBIS(code, "7.7.0")) return "Pillanatnyi meddő QIII";
+  if (IS_OBIS(code, "8.7.0")) return "Pillanatnyi meddő QIV";
 
+  // --- 8. ÁRAM KORLÁTOZÁS HATÁRÉRTÉKEK ---
+  if (IS_OBIS(code, "31.4.0")) return "Áram korlátozás küszöb L1";
+  if (IS_OBIS(code, "51.4.0")) return "Áram korlátozás küszöb L2";
+  if (IS_OBIS(code, "71.4.0")) return "Áram korlátozás küszöb L3";
+
+  // --- 9. TELJESÍTMÉNY TÉNYEZŐK ÉS FREKVENCIA ---
+  if (IS_OBIS(code, "13.7.0")) return "Teljesítmény tényező (CosPhi)";
+  if (IS_OBIS(code, "33.7.0")) return "Teljesítmény tényező L1";
+  if (IS_OBIS(code, "53.7.0")) return "Teljesítmény tényező L2";
+  if (IS_OBIS(code, "73.7.0")) return "Teljesítmény tényező L3";
+  if (IS_OBIS(code, "14.7.0")) return "Hálózati frekvencia";
+
+  // --- 10. EGYÉB KIEGÉSZÍTŐK ---
+  if (code == "WIFI_signal")   return "Wi-Fi térerő";
+
+  #undef IS_OBIS
   return code;
 }
 
@@ -95,47 +103,57 @@ String formatObisToRow(String line) {
     return "";
   }
 
-  String obisCode = "";
+  String rawCode = "";
   String obisVal = "";
 
   int eqPos = line.indexOf('=');
   if (eqPos != -1) {
-    obisCode = line.substring(0, eqPos);
+    rawCode = line.substring(0, eqPos);
     obisVal = line.substring(eqPos + 1);
   } else {
     int openParen = line.indexOf('(');
     if (openParen == -1) return "";
 
-    obisCode = line.substring(0, openParen);
+    rawCode = line.substring(0, openParen);
     obisVal = line.substring(openParen + 1);
     if (obisVal.endsWith(")")) obisVal = obisVal.substring(0, obisVal.length() - 1);
   }
 
-  obisCode.trim();
+  rawCode.trim();
   obisVal.trim();
 
-  String obisName = getObisName(obisCode);
+  // OBIS kód megtisztítása az előtagoktól (pl. "1-0:32.7.0*255" -> "32.7.0")
+  String cleanCode = rawCode;
+  if (cleanCode.indexOf(':') != -1) {
+    cleanCode = cleanCode.substring(cleanCode.indexOf(':') + 1);
+  }
+  if (cleanCode.indexOf('*') != -1) {
+    cleanCode = cleanCode.substring(0, cleanCode.indexOf('*'));
+  }
 
-  // Mértékegység illesztés
+  // A megtisztított kóddal kérjük le a nevet
+  String obisName = getObisName(cleanCode);
+
+  // Mértékegység illesztés a tisztított kód alapján
   if (obisVal.indexOf('*') != -1) {
     obisVal.replace("*", " ");
   } else {
-    if (obisCode.indexOf("1.0.0") != -1) {
+    if (cleanCode.indexOf("1.0.0") != -1) {
       if (obisVal.indexOf('.') == -1) obisVal = formatP1Time(obisVal);
     } 
-    else if (obisCode.indexOf("1.8.") != -1 || obisCode.indexOf("2.8.") != -1 || obisCode.indexOf("15.8.") != -1) obisVal += " kWh";
-    else if (obisCode.indexOf("3.8.") != -1 || obisCode.indexOf("4.8.") != -1 || obisCode.indexOf("5.8.") != -1 || obisCode.indexOf("6.8.") != -1 || obisCode.indexOf("7.8.") != -1 || obisCode.indexOf("8.8.") != -1) obisVal += " kvarh";
-    else if (obisCode.indexOf("32.7.0") != -1 || obisCode.indexOf("52.7.0") != -1 || obisCode.indexOf("72.7.0") != -1) obisVal += " V";
-    else if (obisCode.indexOf("31.7.0") != -1 || obisCode.indexOf("51.7.0") != -1 || obisCode.indexOf("71.7.0") != -1 || obisCode.indexOf("31.4.0") != -1 || obisCode.indexOf("51.4.0") != -1 || obisCode.indexOf("71.4.0") != -1) obisVal += " A";
-    else if (obisCode.indexOf("1.7.0") != -1 || obisCode.indexOf("2.7.0") != -1 || obisCode.indexOf("21.7.0") != -1 || obisCode.indexOf("41.7.0") != -1 || obisCode.indexOf("61.7.0") != -1 || obisCode.indexOf("22.7.0") != -1 || obisCode.indexOf("42.7.0") != -1 || obisCode.indexOf("62.7.0") != -1) obisVal += " kW";
-    else if (obisCode.indexOf("14.7.0") != -1) obisVal += " Hz";
+    else if (cleanCode.indexOf("1.8.") != -1 || cleanCode.indexOf("2.8.") != -1 || cleanCode.indexOf("15.8.") != -1) obisVal += " kWh";
+    else if (cleanCode.indexOf("3.8.") != -1 || cleanCode.indexOf("4.8.") != -1 || cleanCode.indexOf("5.8.") != -1 || cleanCode.indexOf("6.8.") != -1 || cleanCode.indexOf("7.8.") != -1 || cleanCode.indexOf("8.8.") != -1) obisVal += " kvarh";
+    else if (cleanCode.indexOf("32.7.0") != -1 || cleanCode.indexOf("52.7.0") != -1 || cleanCode.indexOf("72.7.0") != -1) obisVal += " V";
+    else if (cleanCode.indexOf("31.7.0") != -1 || cleanCode.indexOf("51.7.0") != -1 || cleanCode.indexOf("71.7.0") != -1 || cleanCode.indexOf("31.4.0") != -1 || cleanCode.indexOf("51.4.0") != -1 || cleanCode.indexOf("71.4.0") != -1) obisVal += " A";
+    else if (cleanCode.indexOf("1.7.0") != -1 || cleanCode.indexOf("2.7.0") != -1 || cleanCode.indexOf("21.7.0") != -1 || cleanCode.indexOf("41.7.0") != -1 || cleanCode.indexOf("61.7.0") != -1 || cleanCode.indexOf("22.7.0") != -1 || cleanCode.indexOf("42.7.0") != -1 || cleanCode.indexOf("62.7.0") != -1) obisVal += " kW";
+    else if (cleanCode.indexOf("14.7.0") != -1) obisVal += " Hz";
   }
 
-  // Megtisztított kód eltárolása az attribútumban a gyors JS szűréshez
-  String card = "<div class='card' data-code='" + obisCode + "'>";
+  // Megtisztított data-code attribútum a gyors szűréshez
+  String card = "<div class='card' data-code='" + cleanCode + "'>";
   card += "<div class='card-title'>" + obisName + "</div>";
   card += "<div class='card-value'>" + obisVal + "</div>";
-  card += "<div class='card-code'>" + obisCode + "</div>";
+  card += "<div class='card-code'>" + cleanCode + "</div>";
   card += "</div>";
 
   return card;
