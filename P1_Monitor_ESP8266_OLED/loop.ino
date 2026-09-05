@@ -1,5 +1,5 @@
 void loop() {
-    
+     
     // DNS szerver kéréseinek feldolgozása (Captive Portal)
     dnsServer.processNextRequest();
     
@@ -41,6 +41,8 @@ void loop() {
     }
     
     // 2. Reset gomb figyelése
+   
+    
     handleResetButton();
 
     // 3. Soros port folyamatos olvasása (NEM blokkoló)
