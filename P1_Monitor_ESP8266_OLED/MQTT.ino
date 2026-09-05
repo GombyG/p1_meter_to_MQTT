@@ -42,6 +42,9 @@ void handleMQTTConnection() {
         if (millis() - lastWifiSignalPublish > 60000) {
             lastWifiSignalPublish = millis();
             publishMetric("WIFI_signal", String(WiFi.RSSI()));
+
+            String versionTopic = mqttBaseTopic + "/ESP_software_version";                          
+            mqttClient.publish(versionTopic.c_str(), String(CURRENT_VERSION).c_str(), true);
         }
     }
 }
