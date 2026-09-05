@@ -6,7 +6,7 @@ void checkForUpdates() {
     client.setInsecure();
 
     // --- 1. Legfrissebb verziószám lekérése a latest.txt fájlból ---
-    String versionUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + "main/latest.txt?t=" + String(millis());
+    String versionUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + "main/latest.txt?nocache=" + String(millis());
 
     HTTPClient http;
     http.begin(client, versionUrl);
