@@ -9,10 +9,11 @@ void loop() {
 
     if (!startupUpdateChecked && WiFi.status() == WL_CONNECTED) {
         startupUpdateChecked = true; // Azonnal letiltjuk, hogy a loop következő köreiben ne fusson le újra!
-        
+        lastFwCheckTime = millis();
+
         u8g2.clearBuffer();
-        u8g2.setFont(u8g2_font_ncenB08_tf);
-        u8g2.drawUTF8(0, 30, "Automata FW keresés...");
+        u8g2.drawUTF8(0, 25, "Automata");
+        u8g2.drawUTF8(0, 40, "Firmware keresés..");
         u8g2.sendBuffer();
         
         delay(1000); // Rövid szünet, hogy a kijelző olvasható legyen
@@ -20,6 +21,23 @@ void loop() {
         
         // Ha nem talált frissítést és visszatér a kód, visszaállítjuk a rendes kijelzőt
         updateOledDisplay(); 
+    }
+
+    // --- ÚJ: Periodikus firmware-ellenőrzés (csak ha már túl vagyunk az induláskori ellenőrzésen) ---
+    if (startupUpdateChecked && WiFi.status() == WL_CONNECTED && !inMenuMode) {
+        if (millis() - lastFwCheckTime > FW_CHECK_INTERVAL_MS) {
+            lastFwCheckTime = millis();
+            
+            u8g2.clearBuffer();
+            u8g2.drawUTF8(0, 25, "Időzitett");
+            u8g2.drawUTF8(0, 40, "Firmware keresés..");
+            u8g2.sendBuffer();
+            
+            delay(1000);
+            checkForUpdates();
+            
+            updateOledDisplay();
+        }
     }
     
     // 2. Reset gomb figyelése

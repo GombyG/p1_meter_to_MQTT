@@ -26,7 +26,7 @@ void handleResetButton() {
     // --- GOMB FOLYAMATOSAN NYOMVA VAN ---
     if (currentButtonState == LOW && pressStartTime != 0) {
         // Ha elérte a 3 másodpercet ÉS ebben a nyomásban még nem futott le az akció
-        if (!longPressExecuted && (millis() - pressStartTime >= 3000)) {
+        if (!longPressExecuted && (millis() - pressStartTime >= 2000)) {
             longPressExecuted = true; // Szoftveres retesz
             lastMenuActivity = millis(); 
 

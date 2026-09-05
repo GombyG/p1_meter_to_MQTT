@@ -47,7 +47,7 @@
 
 // --- Működési beállítások ---
 #define P1_READ_INTERVAL_MS 10000       // Olvasás 10mp-ként 
-
+#define FW_CHECK_INTERVAL_MS 600000UL // Firmware ellenőrzés óránként (3600000 ms = 1 óra; 600000 ms = 10 perc)
 // --- Globális objektumok ---
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, OLED_RESET, OLED_SCL, OLED_SDA);
 ESP8266WebServer server(80);
@@ -58,6 +58,7 @@ PubSubClient mqttClient(wifiClient);
 const float CURRENT_VERSION = SECRET_VERSION;
 const char* wifiConfigPath = "/wifi.txt";
 unsigned long lastP1ReadTime = 0;
+unsigned long lastFwCheckTime = 0;
 String lastPowerBE = "0";
 String lastPowerKI = "0";
 String chipId = "";
