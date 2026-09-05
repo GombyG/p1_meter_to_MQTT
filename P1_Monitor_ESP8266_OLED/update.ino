@@ -8,7 +8,7 @@ void checkForUpdates() {
     // --- 1. Legfrissebb verziószám lekérése a latest.txt fájlból ---
     String versionUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + GITHUB_VERSION_FILE +"?nocache=" + String(millis());
     
-    Serial.print(versionUrl);  
+    Serial.println(versionUrl);  
 
     HTTPClient http;
     http.begin(client, versionUrl);
@@ -28,16 +28,34 @@ void checkForUpdates() {
         return;
     }
 
-    String latestVersionStr = http.getString();
-    latestVersionStr.trim();
-    latestVersionStr.replace("v", "");
+    String payload = http.getString();
     http.end();
 
     Serial.print("Payload: '");
-    Serial.print(latestVersionStr);
+    Serial.print(payload);
     Serial.println("'");
 
-    float latestVersion = latestVersionStr.toFloat();
+    // --- A "LATEST_VERSION" utáni számérték kinyerése ---
+    int verPos = payload.indexOf("LATEST_VERSION");
+    if (verPos == -1) {
+        Serial.println("LATEST_VERSION nem található a válaszban.");
+        return;
+    }
+
+    int i = verPos + strlen("LATEST_VERSION");
+    // Átugorjuk a szóközöket/tabokat a kulcsszó és a szám között
+    while (i < (int)payload.length() && !isDigit(payload[i])) i++;
+
+    int start = i;
+    while (i < (int)payload.length() && (isDigit(payload[i]) || payload[i] == '.')) i++;
+
+    String verStr = payload.substring(start, i);
+    Serial.print("Kinyert verzió string: '");
+    Serial.print(verStr);
+    Serial.println("'");
+
+    float latestVersion = verStr.toFloat();
+
     Serial.print("Legfrissebb verzió a GitHubon: ");
     Serial.println(latestVersion);
 
@@ -56,7 +74,7 @@ void checkForUpdates() {
     String firmwareUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + String(GITHUB_FW_NAME) + "?t=" + String(millis());
 
     u8g2.clearBuffer();
-    u8g2.drawUTF8(0, 10, (String("Új verzió: ") + latestVersionStr).c_str());
+    u8g2.drawUTF8(0, 10, (String("Új verzió: ") + latestVersion).c_str());
     u8g2.drawUTF8(0, 24, "Letöltés...");
     u8g2.sendBuffer();
 
