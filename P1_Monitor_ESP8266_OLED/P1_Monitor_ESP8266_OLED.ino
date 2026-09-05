@@ -132,6 +132,7 @@ WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
 // --- Globális változók ---
+
 const float CURRENT_VERSION = LATEST_VERSION;
 const char* wifiConfigPath = "/wifi.txt";
 unsigned long lastP1ReadTime = 0;
@@ -151,6 +152,7 @@ bool startupUpdateChecked = false;
 extern DNSServer dnsServer;
 String tempObisData = ""; // Ide gyűjtjük az éppen beérkező kártyákat
 String allObisData = "";  // Ezt jeleníti meg a handleRoot() a weblapon
+void addObisCard(const String& rawCode, String value);
 
 String formatWatt(const String& kwString) {
     if (kwString.length() == 0 || kwString == "N/A") return "0 W";

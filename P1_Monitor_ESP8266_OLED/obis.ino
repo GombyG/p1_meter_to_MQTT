@@ -152,74 +152,10 @@ String formatObisToRow(String line) {
   // Megtisztított data-code attribútum a gyors szűréshez
   String card = "<div class='card' data-code='" + cleanCode + "'>";
   card += "<div class='card-title'>" + obisName + "</div>";
-  card += "<div class='card-value'>" + obisVal + "</div>";
+  card += "<span class='star' onclick='tG(\"" + cleanCode + "\", this)'>★</span>";
+  card += "<div class='card-value'>" + obisVal + "</div>"; // <-- obisVal-ra javítva
   card += "<div class='card-code'>" + cleanCode + "</div>";
   card += "</div>";
-
+  
   return card;
-}
-void parseP1Telegram(String telegram) {
-    int startIdx = 0;
-    bool inHistoricalBlock = false;
-
-    while (startIdx < telegram.length()) {
-        int endIdx = telegram.indexOf('\n', startIdx);
-        if (endIdx == -1) endIdx = telegram.length();
-        
-        String line = telegram.substring(startIdx, endIdx);
-        line.trim();
-
-        // 1. Történeti / Elszámolási blokk (0-0:98.1.0) kiszűrése
-        if (line.indexOf("98.1.0") != -1) {
-            inHistoricalBlock = true;
-        }
-
-        if (inHistoricalBlock) {
-            if (line.startsWith(")")) inHistoricalBlock = false;
-            startIdx = endIdx + 1;
-            continue;
-        }
-
-        // 2. Érvénytelen sorok, fejlécek és CRC eldobása
-        if (line.length() == 0 || line.startsWith("!") || line.startsWith("AUX")) {
-            startIdx = endIdx + 1;
-            continue;
-        }
-
-        // 3. OBIS kód és érték szétválasztása
-        int openParen = line.indexOf('(');
-        if (openParen != -1) {
-            String rawCode = line.substring(0, openParen);
-            String rawVal = line.substring(openParen + 1);
-
-            if (rawVal.endsWith(")")) {
-                rawVal = rawVal.substring(0, rawVal.length() - 1);
-            }
-
-            // Érték megtisztítása a mértékegységtől (csak a szám/érték marad)
-            int starIdx = rawVal.indexOf('*');
-            if (starIdx != -1) {
-                rawVal = rawVal.substring(0, starIdx);
-            }
-
-            // Időbélyeg formázás
-            if (rawCode.indexOf("1.0.0") != -1) {
-                rawVal = formatP1Time(rawVal);
-            }
-
-            // MQTT Topic név kinyerése az OBIS kódból (pl. "1-0:1.8.0" -> "1.8.0")
-            String topicName = rawCode;
-            topicName.replace("1-0:", "");
-            topicName.replace("0-0:", "");
-
-            // Publikálás MQTT-re (.c_str() használatával a típus hiba javítására)
-            publishMetric(topicName.c_str(), rawVal);
-
-            // Segédváltozók frissítése
-            if (rawCode.indexOf("1.7.0") != -1) lastPowerBE = rawVal;
-            if (rawCode.indexOf("2.7.0") != -1) lastPowerKI = rawVal;
-        }
-
-        startIdx = endIdx + 1;
-    }
 }
