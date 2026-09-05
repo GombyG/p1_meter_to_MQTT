@@ -35,7 +35,7 @@ void checkForUpdates() {
     Serial.print(payload);
     Serial.println("'");
 
-    // --- A "LATEST_VERSION" utáni számérték kinyerése ---
+    // --- A "LATEST_VERSION" utáni szöveg kinyerése (string formában) ---
     int verPos = payload.indexOf("LATEST_VERSION");
     if (verPos == -1) {
         Serial.println("LATEST_VERSION nem található a válaszban.");
@@ -43,7 +43,6 @@ void checkForUpdates() {
     }
 
     int i = verPos + strlen("LATEST_VERSION");
-    // Átugorjuk a szóközöket/tabokat a kulcsszó és a szám között
     while (i < (int)payload.length() && !isDigit(payload[i])) i++;
 
     int start = i;
@@ -54,13 +53,28 @@ void checkForUpdates() {
     Serial.print(verStr);
     Serial.println("'");
 
-    float latestVersion = verStr.toFloat();
+    // --- Átváltás EGÉSZ SZÁMRA (pl. "1.58" -> 158), pontos, kerekítésmentes összehasonlításhoz ---
+    int dotPos = verStr.indexOf('.');
+    int remoteVersionInt;
+    if (dotPos == -1) {
+        remoteVersionInt = verStr.toInt() * 100;
+    } else {
+        String intPart = verStr.substring(0, dotPos);
+        String fracPart = verStr.substring(dotPos + 1);
+        while (fracPart.length() < 2) fracPart += "0";   // "5" -> "50"
+        fracPart = fracPart.substring(0, 2);              // ha véletlenül 3+ tizedes lenne
+        remoteVersionInt = intPart.toInt() * 100 + fracPart.toInt();
+    }
 
-    Serial.print("Legfrissebb verzió a GitHubon: ");
-    Serial.println(latestVersion);
+    int currentVersionInt = round(CURRENT_VERSION * 100);
 
-    // --- 2. Összehasonlítás ---
-    if (latestVersion <= CURRENT_VERSION || latestVersion <= 0) {
+    Serial.print("Táv verzió (int): ");
+    Serial.print(remoteVersionInt);
+    Serial.print("   Helyi verzió (int): ");
+    Serial.println(currentVersionInt);
+
+    // --- Összehasonlítás EGÉSZ SZÁMOKKAL ---
+    if (remoteVersionInt <= currentVersionInt) {
         u8g2.clearBuffer();
         u8g2.drawUTF8(0, 25, "A szoftver");
         u8g2.drawUTF8(0, 40, "naprakész!");
@@ -74,7 +88,7 @@ void checkForUpdates() {
     String firmwareUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + String(GITHUB_FW_NAME) + "?t=" + String(millis());
 
     u8g2.clearBuffer();
-    u8g2.drawUTF8(0, 10, (String("Új verzió: ") + latestVersion).c_str());
+    u8g2.drawUTF8(0, 10, (String("Uj verzio: ") + verStr).c_str());
     u8g2.drawUTF8(0, 24, "Letöltés...");
     u8g2.sendBuffer();
 
