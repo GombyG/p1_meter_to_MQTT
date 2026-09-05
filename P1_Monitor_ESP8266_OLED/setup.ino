@@ -1,16 +1,5 @@
 void setup() 
     {
-        Wire.begin(OLED_SDA, OLED_SCL);
-
-        if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
-            for(;;); 
-        }
-        logo_on(5000);
-        
-        
-        
-        
-        
         // NTP szerver adatai
         configTime("CET-1CEST,M3.5.0,M10.5.0/3", "hu.pool.ntp.org", "pool.ntp.org");
         
@@ -34,10 +23,9 @@ void setup()
         
         // OLED kijelző
         u8g2.begin();
+        showLogo(5000);
         u8g2.setFont(u8g2_font_ncenB08_tf);
-        void oled_write(byte sor, const String& szoveg);
-        void oled_clear();
-        void oled_send();
+
         handleResetButton();
 
         // Változók deklarálása (CSAK EGYSZER)
@@ -90,6 +78,7 @@ void setup()
         }
         server.on("/", handleRoot);
         server.on("/data", handleData);
+        server.on("/raw", handleRaw);
         server.begin();
         updateOledDisplay();
 }

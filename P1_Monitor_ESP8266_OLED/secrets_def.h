@@ -19,10 +19,3 @@
 
 // WIFI OTA frissítés esetén ezt a jelszót kell megadni a feltöltés elött
 #define SECRET_OTA_PASSWORD        "YOUR_OTA_PASSWORD" 
-
-
-
-
-#define SECRET_GITHUB_FW_NAME      "main/P1_Monitor_ESP8266_OLED/build/esp8266.esp8266.generic/P1_Monitor_ESP8266_OLED.ino.bin"
-
-#define SECRET_OTA_PASSWORD        "admin"

@@ -1,6 +1,7 @@
 void handleP1Port() {
     static String currentLine = "";
     static String p1_telegram = "";
+    static String tempObisData = "";
     static bool inTelegram = false;
 
     while (Serial.available() > 0) {
@@ -10,26 +11,44 @@ void handleP1Port() {
         if (c == '/') { 
             inTelegram = true;
             p1_telegram = "";
-            allObisData = ""; // Webes adatok törlése az új telegramnál
+            tempObisData = "";
             currentLine = "";
         }
 
         if (inTelegram) {
-            p1_telegram += c; // Gyűjtjük a teljes telegramot a parseP1Telegram számára
-            currentLine += c; // Gyűjtjük az aktuális sort a webes táblázathoz
+            p1_telegram += c;
 
-            // 2. Sor vége (Soremelés) -> Webes táblázat frissítése
-            if (c == '\n') {
-                String tableRow = formatObisToRow(currentLine);
-                if (tableRow.length() > 0) {
-                    allObisData += tableRow;
+            // 2. Sorok gyűjtése és lezárása (\n vagy \r esetén)
+            if (c == '\n' || c == '\r') {
+                if (currentLine.length() > 0) {
+                    String tableRow = formatObisToRow(currentLine);
+                    if (tableRow.length() > 0) {
+                        tempObisData += tableRow;
+                    }
+                    currentLine = ""; // Sor kiürítése
                 }
-                currentLine = ""; // Sor kiürítése a következőhöz
+            } else {
+                currentLine += c; // Karakter hozzáadása a sorhoz
             }
 
-            // 3. Telegram vége -> Feldolgozás és MQTT küldés
+            // 3. Telegram vége (!)
             if (c == '!') { 
-                parseP1Telegram(p1_telegram); // Most már a TELJES telegramot kapja meg!
+                // Ha az utolsó sorban (a ! karakter előtt/után) maradt feldolgozatlan adat
+                if (currentLine.length() > 0) {
+                    String tableRow = formatObisToRow(currentLine);
+                    if (tableRow.length() > 0) {
+                        tempObisData += tableRow;
+                    }
+                }
+
+                // Adatok áttöltése a webes globális változóba
+                if (tempObisData.length() > 0) {
+                    allObisData = tempObisData;
+                }
+
+                // MQTT küldés
+                parseP1Telegram(p1_telegram); 
+
                 inTelegram = false;
                 currentLine = "";
                 break;
