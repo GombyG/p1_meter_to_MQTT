@@ -23,6 +23,8 @@
 #include "wifi_management.h"
 // --- IDŐ ---
 #include <time.h>
+// --- VERZIÓ ---
+#include "latest_fw_version.h"
 
 // --- Hardveres beállítások ---
 #define OLED_SDA            14 // D5
@@ -31,6 +33,7 @@
 #define MODE_BTN_PIN        0  // D3 (GPIO0) - Reset gomb
 
 // --- Saját adatok betöltése ---
+// A secret_def.h fájlt nevezd át secret.h-ra és add meg a saját adataidat. 
 #include "secrets.h"
 
 // --- MQTT beállítások ---
@@ -47,7 +50,7 @@
 
 // --- Működési beállítások ---
 #define P1_READ_INTERVAL_MS 10000       // Olvasás 10mp-ként 
-#define FW_CHECK_INTERVAL_MS 600000UL // Firmware ellenőrzés óránként (3600000 ms = 1 óra; 600000 ms = 10 perc)
+#define FW_CHECK_INTERVAL_MS 600000UL // Firmware ellenőrzés (3600000 ms = 1 óra; 600000 ms = 10 perc)
 // --- Globális objektumok ---
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, OLED_RESET, OLED_SCL, OLED_SDA);
 ESP8266WebServer server(80);
@@ -55,7 +58,7 @@ WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
 // --- Globális változók ---
-const float CURRENT_VERSION = SECRET_VERSION;
+const float CURRENT_VERSION = LATEST_VERSION;
 const char* wifiConfigPath = "/wifi.txt";
 unsigned long lastP1ReadTime = 0;
 unsigned long lastFwCheckTime = 0;

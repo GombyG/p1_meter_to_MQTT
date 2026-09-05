@@ -1,12 +1,5 @@
 // --- MQTT beállítások ---
 
-// Verziószám megadása:
-// ez jelenik meg a kijelzőn; MQTT-n ; WEBlapon
-// Ez alapján dönti el hogy van-e újabb verzió
-// Ne használj betűket csak a x.xx formátumot!
-
-#define SECRET_VERSION             1.00
-
 // MQTT szerver elérés címe:
 // Cseréld le a saját adataiddal a YOUR_ kezdetű adatokat
 // ha nem az alap portot használod azt is változtasd meg.
