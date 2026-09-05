@@ -40,7 +40,10 @@
 #define MQTT_PASSWORD       SECRET_MQTT_PASSWORD
 
 // --- MQTT topic ahol az adatok megjelennek ---
-#define MQTT_BASE_TOPIC     "power/EON/smartmeter"
+#define MQTT_BASE_TOPIC     SECRET_MQTT_BASE_TOPIC
+#define GITHUB_REPO         SECRET_GITHUB_REPO
+#define GITHUB_FW_NAME      SECRET_GITHUB_FW_NAME
+#define OTA_PASSWORD        SECRET_OTA_PASSWORD
 
 // --- Működési beállítások ---
 #define P1_READ_INTERVAL_MS 10000       // Olvasás 10mp-ként 
@@ -96,6 +99,8 @@ String getFormattedTime() {
     
     return String(timeBuffer);
 }
+
+
 
 void waitForNtpSync() {
     // Legfeljebb 3 másodpercig vár az NTP szinkronra

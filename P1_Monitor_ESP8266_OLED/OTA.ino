@@ -2,7 +2,7 @@
 void setupOTA() {
     String otaHost = "P1-Smartmeter_" + chipId;
     ArduinoOTA.setHostname(otaHost.c_str());
-    ArduinoOTA.setPassword("admin"); 
+    ArduinoOTA.setPassword(OTA_PASSWORD); 
 
     ArduinoOTA.onStart([]() {
         u8g2.clearBuffer();
