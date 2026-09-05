@@ -110,7 +110,7 @@ void parseP1Telegram(String telegram) {
 
 // OBIS kódok feliratozása
 String getObisName(String code) {
-  if (code.endsWith("1.0.0")) return "Időbélyeg";
+  if (code.endsWith("1.0.0")) return "Idő";
   if (code.endsWith("96.1.0")) return "Gyári szám";
   if (code.endsWith("96.14.0")) return "Aktuális tarifa";
   if (code.endsWith("96.50.68")) return "Kapcsoló állása";

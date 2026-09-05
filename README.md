@@ -56,8 +56,26 @@ Egy SSD-re van telepítve egy UBUNTU server 16.04, és ezen fut a mosquitto brok
 Folytatás nemsokára ......
 
 
+Chip is ESP8266EX
+Features: Wi-Fi, 160MHz
+Crystal is 26MHz
+MAC: 8cce4ede3652
+Manufacturer: c4
+Device: 6016
+Status value: 0x600000
+Detected flash size: 4MB
+
+https://www.espboards.dev/tools/program/
+
+vagy 
+
+https://esptool.spacehuhn.com/
+
+
+0x00000
+
+
+
 ## 📄 Licensz
 
 Ez a projekt nyílt forráskódú, szabadon felhasználható és módosítható a MIT licenc feltételei szerint.
-README.md
-A(z) README.md megjelenítése.
