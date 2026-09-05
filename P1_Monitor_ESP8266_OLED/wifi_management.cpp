@@ -1,12 +1,28 @@
 #include "wifi_management.h"
 #include <U8g2lib.h>
-#include "oled_write.ino"
+
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 extern ESP8266WebServer server;
 extern const char* wifiConfigPath;
 
 DNSServer dnsServer;
 const byte DNS_PORT = 53;
+
+void oled_write(byte sor, const String& szoveg) {
+  const byte elsoSorY = 10;
+  const byte sortav = 14;
+
+  u8g2.drawUTF8(0, elsoSorY + (sor - 1) * sortav, szoveg.c_str());
+}
+
+void oled_clear() {
+u8g2.clearBuffer();
+}
+
+void oled_send() {
+u8g2.sendBuffer();
+}
+
 
 bool loadConfig(String& ssid, String& password, String& ip, String& gateway, String& subnet,
                 String& mqttServer, String& mqttPort, String& mqttUser, String& mqttPass) {
