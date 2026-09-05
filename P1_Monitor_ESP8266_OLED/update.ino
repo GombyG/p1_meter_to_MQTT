@@ -24,7 +24,6 @@ void checkForUpdates() {
             if (ESPhttpUpdate.getLastError() != 404 && ESPhttpUpdate.getLastError() != HTTPC_ERROR_CONNECTION_REFUSED) {
                 Serial.printf("Hiba a(z) %s verziónál: %d\n", version_str, ESPhttpUpdate.getLastError());
                 u8g2.clearBuffer();
-                u8g2.setFont(u8g2_font_ncenB08_tf);
                 u8g2.drawUTF8(0, 10, (String("ver. ") + String(atof(version_str) - 0.01, 2)).c_str());
                 u8g2.drawUTF8(0, 24, "Verzió keresése..");
                 u8g2.drawUTF8(0, 40, "Várjon!");
@@ -33,7 +32,6 @@ void checkForUpdates() {
         }
     } // Ha a ciklus teljesen lefutott és nem indult újra a chip, akkor nincs újabb verzió fent 
     u8g2.clearBuffer();
-    u8g2.setFont(u8g2_font_ncenB08_tf);
     u8g2.drawUTF8(0, 25, "A szoftver");
     u8g2.drawUTF8(0, 40, "naprakész!");
     u8g2.sendBuffer();

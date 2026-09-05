@@ -23,8 +23,10 @@ void setup()
         
         // OLED kijelző
         u8g2.begin();
-        
-        // 
+        u8g2.setFont(u8g2_font_ncenB08_tf);
+        void oled_write(byte sor, const String& szoveg);
+        void oled_clear();
+        void oled_send();
         handleResetButton();
 
         // Változók deklarálása (CSAK EGYSZER)

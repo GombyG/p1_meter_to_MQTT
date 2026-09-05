@@ -1,45 +1,58 @@
+// -----------------------------------------------------------------------
+//                          P1 monitor ESP9266 OLED
+//     Villanyóra P1 portjának segítségével az adatok MQTT-re küldése
+//            valamint az ESP weblapján az adatok megjelenítése
+// Hardver leírás, forráskód: https://github.com/GombyG/p1_meter_to_MQTT
+// -----------------------------------------------------------------------
 
-
-
+// --- ESP WIFI ---
 #include <ESP8266WiFi.h>
+// --- ESP WEB szerver ---
 #include <ESP8266WebServer.h>
-#include <U8g2lib.h>
-#include <PubSubClient.h>   
-#include <ArduinoOTA.h>     
-#include "wifi_management.h"
-#include <time.h>
+// ---  ESP WEB kliens ---
 #include <ESP8266HTTPClient.h>
+// --- HTTP firmware letöltés ---
 #include <ESP8266httpUpdate.h>
+// --- OLED ---
+#include <U8g2lib.h>
+// --- MQTT ---
+#include <PubSubClient.h>
+// --- OTA ---   
+#include <ArduinoOTA.h>     
+// --- WIFI ---
+#include "wifi_management.h"
+// --- IDŐ ---
+#include <time.h>
 
 // --- Hardveres beállítások ---
 #define OLED_SDA            14 // D5
 #define OLED_SCL            12 // D6
 #define OLED_RESET          U8X8_PIN_NONE
 #define MODE_BTN_PIN        0  // D3 (GPIO0) - Reset gomb
+
+// --- Saját adatok betöltése ---
 #include "secrets.h"
+
 // --- MQTT beállítások ---
 #define MQTT_SERVER         SECRET_MQTT_SERVER
 #define MQTT_PORT           SECRET_MQTT_PORT
 #define MQTT_USER           SECRET_MQTT_USER
 #define MQTT_PASSWORD       SECRET_MQTT_PASSWORD
 
+// --- MQTT topic ahol az adatok megjelennek ---
 #define MQTT_BASE_TOPIC     "power/EON/smartmeter"
 
 // --- Működési beállítások ---
-#define P1_READ_INTERVAL_MS 10000 
+#define P1_READ_INTERVAL_MS 10000       // Olvasás 10mp-ként 
 
 // --- Globális objektumok ---
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, OLED_RESET, OLED_SCL, OLED_SDA);
-
-
-
 ESP8266WebServer server(80);
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
 // --- Globális változók ---
 const float CURRENT_VERSION = SECRET_VERSION;
-
 const char* wifiConfigPath = "/wifi.txt";
 unsigned long lastP1ReadTime = 0;
 String lastPowerBE = "0";

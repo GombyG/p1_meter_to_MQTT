@@ -10,7 +10,7 @@ int getWifiQuality() {
 void updateOledDisplay() {
     u8g2.clearBuffer();
     
-   u8g2.setFont(u8g2_font_ncenB08_tf);
+   
 
     u8g2.drawUTF8(0, 10, (String("P1 Monitor v.") + String(CURRENT_VERSION, 2)).c_str());
 
@@ -26,7 +26,7 @@ void updateOledDisplay() {
     String mqttStatus = (mqttClient.connected()) ? "OK" : "??";
 
     // Kijelző felső sora: Kapcsolati státuszok (pl. "WiFi:67% MQTT:OK")
-    u8g2.setFont(u8g2_font_ncenB08_tf);
+    
     u8g2.drawUTF8(0, 24, ("WiFi:" + wifiStatus + " MQTT:" + mqttStatus).c_str());
     
     // Fogyasztási adatok

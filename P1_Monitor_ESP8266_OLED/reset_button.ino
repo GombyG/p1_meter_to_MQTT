@@ -38,7 +38,7 @@ void handleResetButton() {
             } else {
                 // 2. Funkció indítása menet közben (nem kell elengedni!)
                 u8g2.clearBuffer();
-                u8g2.setFont(u8g2_font_ncenB08_tf);
+               
                 
                 if (selectedMenuItem == 1) { 
                     u8g2.drawUTF8(0, 10, "IP cím:");
@@ -96,7 +96,7 @@ void handleResetButton() {
 // A menü kirajzoló segédfüggvény változatlanul tökéletes
 void drawMyMenu() {
     u8g2.clearBuffer();
-    u8g2.setFont(u8g2_font_ncenB08_tf);
+    
     u8g2.drawUTF8(16, 10, "Menü");
     
     if (selectedMenuItem == 1) u8g2.drawUTF8(0, 25, "->");

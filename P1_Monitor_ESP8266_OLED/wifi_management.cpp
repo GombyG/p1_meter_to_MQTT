@@ -1,6 +1,6 @@
 #include "wifi_management.h"
 #include <U8g2lib.h>
-
+#include "oled_write.ino"
 extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2;
 extern ESP8266WebServer server;
 extern const char* wifiConfigPath;
@@ -135,11 +135,10 @@ void startAPMode() {
 
     server.begin();
 
-    u8g2.clearBuffer();
-    u8g2.setFont(u8g2_font_ncenB08_tf);
-    u8g2.drawUTF8(0, 10, "WiFi Konfiguráció");
-    u8g2.drawUTF8(0, 24, "SSID:P1-METER");
-    u8g2.drawUTF8(0, 38, "PW:12345678");
-    u8g2.drawUTF8(0, 52, "IP: 192.168.4.1");
-    u8g2.sendBuffer();
+    oled_clear();
+    oled_write(1, "WiFi Konfiguráció");
+    oled_write(2, "SSID:P1-METER");
+    oled_write(3, "PW:12345678");
+    oled_write(4, "IP: 192.168.4.1");
+    oled_send();
 }
