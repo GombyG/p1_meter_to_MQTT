@@ -1,1 +1,1 @@
-#define LATEST_VERSION       1.63
+#define LATEST_VERSION       1.64
