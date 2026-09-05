@@ -68,7 +68,7 @@ void checkForUpdates() {
 
     int currentVersionInt = round(CURRENT_VERSION * 100);
 
-    Serial.print("Táv verzió (int): ");
+    Serial.print("Távoli verzió (int): ");
     Serial.print(remoteVersionInt);
     Serial.print("   Helyi verzió (int): ");
     Serial.println(currentVersionInt);
@@ -88,7 +88,7 @@ void checkForUpdates() {
     String firmwareUrl = "https://raw.githubusercontent.com/" + String(GITHUB_REPO) + String(GITHUB_FW_NAME) + "?t=" + String(millis());
 
     u8g2.clearBuffer();
-    u8g2.drawUTF8(0, 10, (String("Uj verzio: ") + verStr).c_str());
+    u8g2.drawUTF8(0, 10, (String("Új verzió: ") + verStr).c_str());
     u8g2.drawUTF8(0, 24, "Letöltés...");
     u8g2.sendBuffer();
 
